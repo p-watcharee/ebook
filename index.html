@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>eBook พลิกหน้า</title>
+  <title>eBook Interactive</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- โหลด Turn.js จาก CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
@@ -25,6 +25,7 @@
       text-align: center;
       font-family: sans-serif;
       font-size: 20px;
+      padding: 20px;
     }
     #flipbook img {
       max-width: 100%;
@@ -35,28 +36,19 @@
 </head>
 <body>
   <div id="flipbook">
+    <!-- หน้า 1 -->
     <div class="page">
       <h2>หน้าปก</h2>
       <img src="https://via.placeholder.com/600x400?text=Cover+Page" alt="Cover">
     </div>
+    <!-- หน้า 2 -->
     <div class="page">
       <h2>เนื้อหา หน้า 1</h2>
       <img src="https://via.placeholder.com/250x150?text=Image+1">
       <img src="https://via.placeholder.com/250x150?text=Image+2">
       <img src="https://via.placeholder.com/250x150?text=Image+3">
     </div>
-    <div class="page">
-      <h2>เนื้อหา หน้า 2</h2>
-      <img src="https://via.placeholder.com/250x150?text=Image+4">
-      <img src="https://via.placeholder.com/250x150?text=Image+5">
-      <img src="https://via.placeholder.com/250x150?text=Image+6">
-    </div>
-    <div class="page">
-      <h2>เนื้อหา หน้า 3</h2>
-      <img src="https://via.placeholder.com/250x150?text=Image+7">
-      <img src="https://via.placeholder.com/250x150?text=Image+8">
-      <img src="https://via.placeholder.com/250x150?text=Image+9">
-    </div>
+    <!-- หน้า 3 -->
     <div class="page">
       <h2>ปกหลัง</h2>
       <img src="https://via.placeholder.com/600x400?text=Back+Cover">
