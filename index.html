@@ -1,66 +1,77 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>eBook Interactive</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- โหลด Turn.js จาก CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
-  <style>
-    body {
-      background: #e5e7eb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    #flipbook {
-      width: 800px;
-      height: 500px;
-    }
-    #flipbook .page {
-      background: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      text-align: center;
-      font-family: sans-serif;
-      font-size: 20px;
-      padding: 20px;
-    }
-    #flipbook img {
-      max-width: 100%;
-      height: auto;
-      margin: 10px 0;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Interactive E-Book (3 pages)</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
-  <div id="flipbook">
-    <!-- หน้า 1 -->
-    <div class="page">
-      <h2>หน้าปก</h2>
-      <img src="https://via.placeholder.com/600x400?text=Cover+Page" alt="Cover">
-    </div>
-    <!-- หน้า 2 -->
-    <div class="page">
-      <h2>เนื้อหา หน้า 1</h2>
-      <img src="https://via.placeholder.com/250x150?text=Image+1">
-      <img src="https://via.placeholder.com/250x150?text=Image+2">
-      <img src="https://via.placeholder.com/250x150?text=Image+3">
-    </div>
-    <!-- หน้า 3 -->
-    <div class="page">
-      <h2>ปกหลัง</h2>
-      <img src="https://via.placeholder.com/600x400?text=Back+Cover">
-    </div>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">📖 My Interactive E-Book</div>
+
+      <div class="controls">
+        <button id="prevBtn" type="button">◀ ก่อนหน้า</button>
+        <span id="pageIndicator" aria-live="polite">- / -</span>
+        <button id="nextBtn" type="button">ถัดไป ▶</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <!-- Root element ของหนังสือ -->
+      <div id="book" class="book">
+        <!-- Page 1: Cover -->
+        <section class="page" data-density="hard">
+          <div class="page-inner cover">
+            <h1>ชื่อหนังสือ (E-Book)</h1>
+            <p>Interactive flipbook บนเว็บ</p>
+            <p class="hint">ลาก/คลิกมุมกระดาษ หรือใช้ปุ่ม/ลูกศรคีย์บอร์ด</p>
+            <div class="page-no">1</div>
+          </div>
+        </section>
+
+        <!-- Page 2: Content -->
+        <section class="page">
+          <div class="page-inner">
+            <h2>บทที่ 1: ตัวอย่างเนื้อหา</h2>
+            <p>
+              นี่คือหน้าที่เป็น HTML จริง ๆ ดังนั้นคุณใส่รูปภาพ ตาราง ปุ่ม ลิงก์ วิดีโอ ฯลฯ ได้
+              เหมือนหน้าเว็บทั่วไป
+            </p>
+
+            <blockquote>
+              Tip: ถ้าคอนเทนต์ยาว ให้จัดเป็นหัวข้อย่อย/คอลัมน์ จะอ่านง่ายขึ้นในหน้ากระดาษ
+            </blockquote>
+
+            <ul>
+              <li>✅ รองรับมือถือ</li>
+              <li>✅ ใส่คอนเทนต์แบบ Interactive ได้</li>
+              <li>✅ เหมาะกับ GitHub Pages</li>
+            </ul>
+
+            <div class="page-no">2</div>
+          </div>
+        </section>
+
+        <!-- Page 3: Back cover / Summary -->
+        <section class="page" data-density="hard">
+          <div class="page-inner back">
+            <h2>จบเล่ม</h2>
+            <p>ขอบคุณที่อ่าน 🙏</p>
+            <p class="small">เพิ่มหน้าได้โดยเพิ่ม &lt;section class="page"&gt; ...</p>
+            <div class="page-no">3</div>
+          </div>
+        </section>
+      </div>
+    </main>
   </div>
 
-  <script>
-    $("#flipbook").turn({
-      width: 800,
-      height: 500,
-      autoCenter: true
-    });
-  </script>
+  <!-- 1) ใส่ไลบรารี page-flip -->
+  <script src="vendor/page-flip.browser.js"></script>
+
+  <!-- 2) โค้ดของเรา -->
+  <script src="js/app.js"></script>
 </body>
 </html>
