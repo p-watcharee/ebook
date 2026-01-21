@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>eBook 5 หน้า</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --paper: #ffffff;
+      --ink: #1f2937;
+      --accent: #2563eb;
+      --muted: #9aa3af;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", "Noto Sans", Arial, sans-serif;
+      color: var(--ink);
+      background: radial-gradient(1200px 600px at 50% -200px, #e8eef7 0%, var(--bg) 60%, #e9edf2 100%);
+    }
+
+    .app {
+      max-width: 920px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .title {
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    .page-indicator {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .book {
+      position: relative;
+      perspective: 1600px;
+      background: transparent;
+    }
+
+    .sheet {
+      position: relative;
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      height: 560px;
+      background: var(--paper);
+      border-radius: 14px;
+      box-shadow:
+        0 20px 40px rgba(31, 41, 55, 0.18),
+        inset 0 0 0 1px rgba(31, 41, 55, 0.06);
+      overflow: hidden;
+    }
+
+    /* Page container */
+    .page {
+      position: absolute;
+      inset: 0;
+      padding: 28px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transform: rotateY(-12deg) translateZ(0);
+      transform-origin: left center;
+      transition:
+        opacity 280ms ease,
+        transform 420ms cubic-bezier(.2,.7,.2,1);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0)) no-repeat,
+        var(--paper);
+    }
+    .page.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: rotateY(0deg);
+    }
+
+    /* Page header/footer */
+    .page h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--muted);
+      border-top: 1px dashed rgba(31,41,55,0.12);
+      padding-top: 10px;
+    }
+
+    /* Content layout */
+    .content {
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      align-content: start;
+    }
+    .figure {
+      background: #f8fafc;
+      border: 1px solid rgba(31,41,55,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .figure img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+      background: #e5e7eb;
+    }
+    .figcap {
+      padding: 8px 10px;
+      font-size: 13px;
+      color: #334155;
+      border-top: 1px solid rgba(31,41,55,0.06);
+    }
+
+    /* Cover styles */
+    .cover {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      align-items: center;
+      justify-items: center;
+      text-align: center;
+      padding: 40px;
+      background:
+        radial-gradient(800px 400px at 50% -120px, #eef3ff 0%, #ffffff 60%),
+        var(--paper);
+    }
+    .cover img,
+    .back img {
+      width: 100%;
+      max-width: 680px;
+      aspect-ratio: 3 / 2;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(31,41,55,0.18);
+    }
+    .cover .brand {
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* Back cover */
+    .back {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      align-items: center;
+      justify-items: center;
+      text-align: center;
+      padding: 40px;
+      background:
+        radial-gradient(800px 400px at 50% -120px, #f7f7f7 0%, #ffffff 60%),
+        var(--paper);
+    }
+
+    /* Navigation */
+    .nav {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      margin: 18px 0 0;
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid rgba(31,41,55,0.18);
+      background: #ffffff;
+      color: #0f172a;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease;
+      box-shadow: 0 6px 14px rgba(31,41,55,0.08);
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(31,41,55,0.12);
+      border-color: rgba(31,41,55,0.28);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .btn.primary {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.28);
+    }
+    .btn.primary:hover {
+      box-shadow: 0 12px 26px rgba(37, 99, 235, 0.36);
+    }
+
+    .jump {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      margin-left: 12px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      border: 1px solid rgba(31,41,55,0.18);
+      cursor: pointer;
+      transition: transform 120ms ease, background 160ms ease, border-color 160ms ease;
+    }
+    .dot.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      transform: scale(1.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+      .sheet { height: auto; }
+      .page { position: relative; transform: none; }
+      .grid-3 { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="title">eBook ตัวอย่าง</div>
+      <div class="page-indicator" id="pageIndicator">หน้า 1/5</div>
+    </div>
+
+    <div class="book">
+      <div class="sheet">
+        <!-- Page 1: Cover -->
+        <section class="page active" id="page1" aria-label="หน้าปก">
+          <div class="cover">
+            <img src="https://via.placeholder.com/900x600?text=หน้าปก+Cover" alt="หน้าปก" />
+            <div class="brand">ฉบับทดลอง • 2026</div>
+          </div>
+          <div class="footer">
+            <span>หน้าปก</span>
+            <span>เลื่อนอ่านด้วยปุ่มด้านล่าง หรือกดแป้นลูกศร</span>
+          </div>
+        </section>
+
+        <!-- Page 2: Content -->
+        <section class="page" id="page2" aria-label="เนื้อหา หน้า 1">
+          <header>
+            <h2>เนื้อหา หน้า 1</h2>
+            <div class="subtitle">ภาพประกอบ 3 ภาพ</div>
+          </header>
+          <div class="content">
+            <div class="grid-3">
+              <figure class="figure">
+                <img src="https://via.placeholder.com/600x400?text=ภาพ+1" alt="ภาพ 1" />
+                <figcaption class="figcap">คำอธิบายภาพ 1</figcaption>
+              </figure>
+              <figure class="figure">
+                <img src="https://via.placeholder.com/600x400?text=ภาพ+2" alt="ภาพ 2" />
+                <figcaption class="figcap">คำอธิบายภาพ 2</figcaption>
+              </figure>
+              <figure class="figure">
+                <img src="https://via.placeholder.com/600x400?text=ภาพ+3" alt="ภาพ 3" />
+                <figcaption class="figcap">คำอธิบายภาพ 3</figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="footer">
+            <span>บทที่ 1</span>
+            <span>หน้า 2</span>
+          </div>
+        </section>
+
+        <!-- Page 3: Content -->
+        <section class="page" id="page3" aria-label="เนื้อหา หน้า 2">
+          <header>
+            <h2>เนื้อหา หน้า 2</h2>
+            <div class="subtitle">ภาพประกอบ 3 ภาพ</div>
+          </header>
+          <div class="content">
+            <div class="grid-3">
+              <figure class="figure">
+                <img src="https://via.placeholder.com/600x400?text=ภาพ+4" alt="ภาพ 4" />
+                <figcaption class="figcap">คำอธิบายภาพ 4</figcaption>
+              </figure>
+              <figure class="figure">
+                <img src="https://via.placeholder.com/600x400?text=ภาพ+5" alt="ภาพ 5" />
+                <figcaption class="figcap">คำอธิบายภาพ 5</figcaption>
+              </figure>
+              <figure class="figure">
+                <img src="https://via.placeholder.com/600x400?text=ภาพ+6" alt="ภาพ 6" />
+                <figcaption class="figcap">คำอธิบายภาพ 6</figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="footer">
+            <span>บทที่ 2</span>
+            <span>หน้า 3</span>
+          </div>
+        </section>
+
+        <!-- Page 4: Content -->
+        <section class="page" id="page4" aria-label="เนื้อหา หน้า 3">
+          <header>
+            <h2>เนื้อหา หน้า 3</h2>
+            <div class="subtitle">ภาพประกอบ 3 ภาพ</div>
+          </header>
+          <div class="content">
+            <div class="grid-3">
+              <figure class="figure">
+                <img src="https://via.placeholder.com/600x400?text=ภาพ+7" alt="ภาพ 7" />
+                <figcaption class="figcap">คำอธิบายภาพ 7</figcaption>
+              </figure>
+              <figure class="figure">
+                <img src="https://via.placeholder.com/600x400?text=ภาพ+8" alt="ภาพ 8" />
+                <figcaption class="figcap">คำอธิบายภาพ 8</figcaption>
+              </figure>
+              <figure class="figure">
+                <img src="https://via.placeholder.com/600x400?text=ภาพ+9" alt="ภาพ 9" />
+                <figcaption class="figcap">คำอธิบายภาพ 9</figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="footer">
+            <span>บทที่ 3</span>
+            <span>หน้า 4</span>
+          </div>
+        </section>
+
+        <!-- Page 5: Back cover -->
+        <section class="page" id="page5" aria-label="ปกหลัง">
+          <div class="back">
+            <img src="https://via.placeholder.com/900x600?text=ปกหลัง+Back+Cover" alt="ปกหลัง" />
+            <div class="brand">ขอบคุณที่อ่าน • จบเล่ม</div>
+          </div>
+          <div class="footer">
+            <span>ปกหลัง</span>
+            <span>หน้า 5</span>
+          </div>
+        </section>
+      </div>
+
+      <div class="nav" aria-label="การนำทาง">
+        <button class="btn" id="prevBtn">ย้อนกลับ</button>
+        <button class="btn primary" id="nextBtn">ถัดไป</button>
+        <div class="jump" id="jumpDots" aria-label="ไปยังหน้า">
+          <!-- dots will be injected -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const totalPages = 5;
+    let currentPage = 1;
+
+    const pages = [...document.querySelectorAll(".page")];
+    const pageIndicator = document.getElementById("pageIndicator");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const jumpDots = document.getElementById("jumpDots");
+
+    // Create jump dots
+    for (let i = 1; i <= totalPages; i++) {
+      const dot = document.createElement("button");
+      dot.className = "dot";
+      dot.setAttribute("aria-label", `ไปยังหน้า ${i}`);
+      dot.addEventListener("click", () => goToPage(i));
+      jumpDots.appendChild(dot);
+    }
+
+    function updateUI() {
+      pages.forEach((p, idx) => {
+        p.classList.toggle("active", idx + 1 === currentPage);
+      });
+      pageIndicator.textContent = `หน้า ${currentPage}/${totalPages}`;
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages;
+
+      [...jumpDots.children].forEach((d, idx) => {
+        d.classList.toggle("active", idx + 1 === currentPage);
+      });
+    }
+
+    function goToPage(n) {
+      currentPage = Math.min(Math.max(n, 1), totalPages);
+      updateUI();
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages) {
+        currentPage++;
+        updateUI();
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        updateUI();
+      }
+    }
+
+    // Keyboard navigation
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === "PageDown") nextPage();
+      if (e.key === "ArrowLeft" || e.key === "PageUp") prevPage();
+      if (e.key === "Home") goToPage(1);
+      if (e.key === "End") goToPage(totalPages);
+    });
+
+    // Button events
+    nextBtn.addEventListener("click", nextPage);
+    prevBtn.addEventListener("click", prevPage);
+
+    // Initialize
+    updateUI();
+  </script>
+</body>
+</html>
